@@ -1,0 +1,18 @@
+Exercise demonstrations
+
+© Aliaksandr Makatserchyk, Gym visual, https://gymvisual.com/
+
+Media source: https://github.com/DuarteSantos8/openGym
+Pinned source commit: 5fdb229fe40d2299ba0c82b84c86259d73944aba
+Source notice: https://github.com/DuarteSantos8/openGym/blob/5fdb229fe40d2299ba0c82b84c86259d73944aba/NOTICE.md
+
+These stills and animations are proprietary media, not covered by openGym's
+AGPL license. The website owner confirmed a separate authorization for use
+in this independent website on 2026-10-28. That authorization does not grant
+visitors redistribution rights. Obtain your own license from Gym visual
+before reusing the media.
+
+The 180 px media files are reproduced without modification. Per-file source
+paths, source Git blob hashes and byte sizes are listed in provenance.json.
+Exercise catalogue identifiers are used solely to identify the demonstrations.
+This website is not endorsed by or affiliated with openGym or Gym visual.

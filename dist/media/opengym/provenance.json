@@ -1,0 +1,187 @@
+{
+  "repository": "https://github.com/DuarteSantos8/openGym",
+  "commit": "5fdb229fe40d2299ba0c82b84c86259d73944aba",
+  "copyright": "\u00a9 Aliaksandr Makatserchyk, Gym visual, gymvisual.com",
+  "assets": [
+    {
+      "path": "media/opengym/0025.mp4",
+      "sourcePath": "catalogue/media/clip/0025.mp4",
+      "gitBlobSha": "858dadd9395f87b45202748a7c3ee82e1e68f494",
+      "bytes": 24222
+    },
+    {
+      "path": "media/opengym/0025.webp",
+      "sourcePath": "catalogue/media/still/0025.webp",
+      "gitBlobSha": "ed66c0b213473af0a0dcfcc3f513743e78b20c2d",
+      "bytes": 7562
+    },
+    {
+      "path": "media/opengym/0314.mp4",
+      "sourcePath": "catalogue/media/clip/0314.mp4",
+      "gitBlobSha": "72cb561349d2100024cab879ec7e388b371f3c27",
+      "bytes": 18657
+    },
+    {
+      "path": "media/opengym/0314.webp",
+      "sourcePath": "catalogue/media/still/0314.webp",
+      "gitBlobSha": "40d0cdd41c55bd0d8e1b1b16104f8a121bea1569",
+      "bytes": 4666
+    },
+    {
+      "path": "media/opengym/0009.mp4",
+      "sourcePath": "catalogue/media/clip/0009.mp4",
+      "gitBlobSha": "7e5d3c28785657533427a6b5c14c4bee23fc9b45",
+      "bytes": 18968
+    },
+    {
+      "path": "media/opengym/0009.webp",
+      "sourcePath": "catalogue/media/still/0009.webp",
+      "gitBlobSha": "851e41d991039091512602722f541c1c4c97a373",
+      "bytes": 4588
+    },
+    {
+      "path": "media/opengym/5873.mp4",
+      "sourcePath": "catalogue/media/clip/5873.mp4",
+      "gitBlobSha": "362e5984c26d7a406801f87dec3a218bb584cebe",
+      "bytes": 20860
+    },
+    {
+      "path": "media/opengym/5873.webp",
+      "sourcePath": "catalogue/media/still/5873.webp",
+      "gitBlobSha": "aab470be58a27c4c31a0fc4103df89078052be15",
+      "bytes": 6048
+    },
+    {
+      "path": "media/opengym/0334.mp4",
+      "sourcePath": "catalogue/media/clip/0334.mp4",
+      "gitBlobSha": "16dd19b88b37875b44f9f1e92a311226a420cf29",
+      "bytes": 20182
+    },
+    {
+      "path": "media/opengym/0334.webp",
+      "sourcePath": "catalogue/media/still/0334.webp",
+      "gitBlobSha": "6752e2ab9f08f494693007a9a46446732bebc1ef",
+      "bytes": 4966
+    },
+    {
+      "path": "media/opengym/4948.mp4",
+      "sourcePath": "catalogue/media/clip/4948.mp4",
+      "gitBlobSha": "cc414ba13f51579c01e3a4d2c5d0c6c390be21d8",
+      "bytes": 24307
+    },
+    {
+      "path": "media/opengym/4948.webp",
+      "sourcePath": "catalogue/media/still/4948.webp",
+      "gitBlobSha": "3f07c3dd1c87cd60f3571f9052141c388e666fc7",
+      "bytes": 8458
+    },
+    {
+      "path": "media/opengym/7583.mp4",
+      "sourcePath": "catalogue/media/clip/7583.mp4",
+      "gitBlobSha": "d1f7fb705035c86f4ea9911bf346fc85615b08db",
+      "bytes": 22416
+    },
+    {
+      "path": "media/opengym/7583.webp",
+      "sourcePath": "catalogue/media/still/7583.webp",
+      "gitBlobSha": "3475b8d46df39c8f11e1c2628463d08586f32cc2",
+      "bytes": 7328
+    },
+    {
+      "path": "media/opengym/1235.mp4",
+      "sourcePath": "catalogue/media/clip/1235.mp4",
+      "gitBlobSha": "cd0cd37777af7bdc0e16f58558665dfa9af81f93",
+      "bytes": 26589
+    },
+    {
+      "path": "media/opengym/1235.webp",
+      "sourcePath": "catalogue/media/still/1235.webp",
+      "gitBlobSha": "c616e0085e041e3ddf002d17f0353ec70bd01da6",
+      "bytes": 7240
+    },
+    {
+      "path": "media/opengym/0218.mp4",
+      "sourcePath": "catalogue/media/clip/0218.mp4",
+      "gitBlobSha": "b4340e1aeca92aace7a41924d71a408a49ec8c1b",
+      "bytes": 28298
+    },
+    {
+      "path": "media/opengym/0218.webp",
+      "sourcePath": "catalogue/media/still/0218.webp",
+      "gitBlobSha": "eb3574a1391d276e955535bda5660893b3efa317",
+      "bytes": 7302
+    },
+    {
+      "path": "media/opengym/0868.mp4",
+      "sourcePath": "catalogue/media/clip/0868.mp4",
+      "gitBlobSha": "aad3fcee9ce28e98b748be50d775dc3a848c3172",
+      "bytes": 21712
+    },
+    {
+      "path": "media/opengym/0868.webp",
+      "sourcePath": "catalogue/media/still/0868.webp",
+      "gitBlobSha": "0f9e62adf422dd63472d4f09c61671a8ff051e71",
+      "bytes": 6940
+    },
+    {
+      "path": "media/opengym/1757.mp4",
+      "sourcePath": "catalogue/media/clip/1757.mp4",
+      "gitBlobSha": "a18894ff8557553e191ded6e94d00f62a9e09f64",
+      "bytes": 19904
+    },
+    {
+      "path": "media/opengym/1757.webp",
+      "sourcePath": "catalogue/media/still/1757.webp",
+      "gitBlobSha": "490656db682b18fa055cb2e90fe28dd17201daeb",
+      "bytes": 4562
+    },
+    {
+      "path": "media/opengym/2290.mp4",
+      "sourcePath": "catalogue/media/clip/2290.mp4",
+      "gitBlobSha": "11d2951c63d37d3e381596d0101165c0f8155456",
+      "bytes": 22677
+    },
+    {
+      "path": "media/opengym/2290.webp",
+      "sourcePath": "catalogue/media/still/2290.webp",
+      "gitBlobSha": "579f5cc3da48372a930019634a181192cfa6eb76",
+      "bytes": 5378
+    },
+    {
+      "path": "media/opengym/0042.mp4",
+      "sourcePath": "catalogue/media/clip/0042.mp4",
+      "gitBlobSha": "5d2f6d0330d03988a75a9d563514f3a270856a43",
+      "bytes": 23962
+    },
+    {
+      "path": "media/opengym/0042.webp",
+      "sourcePath": "catalogue/media/still/0042.webp",
+      "gitBlobSha": "5bd3b8fbc7fc30cfb8b13dea9a565d8d85259ec8",
+      "bytes": 5454
+    },
+    {
+      "path": "media/opengym/0085.mp4",
+      "sourcePath": "catalogue/media/clip/0085.mp4",
+      "gitBlobSha": "33702c1f8132b1361b3978fa610cf8224064c16c",
+      "bytes": 23024
+    },
+    {
+      "path": "media/opengym/0085.webp",
+      "sourcePath": "catalogue/media/still/0085.webp",
+      "gitBlobSha": "842e809b7f4553dad3acf24f8e467c81ca0d2fe2",
+      "bytes": 4600
+    },
+    {
+      "path": "media/opengym/5813.mp4",
+      "sourcePath": "catalogue/media/clip/5813.mp4",
+      "gitBlobSha": "886bd4964884921fd4dcbcef04eabe9b8db2a66b",
+      "bytes": 20298
+    },
+    {
+      "path": "media/opengym/5813.webp",
+      "sourcePath": "catalogue/media/still/5813.webp",
+      "gitBlobSha": "bac8e79e444a15b45b2563f3ea648a34b11b860f",
+      "bytes": 4812
+    }
+  ]
+}
