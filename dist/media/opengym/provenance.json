@@ -182,6 +182,210 @@
       "sourcePath": "catalogue/media/still/5813.webp",
       "gitBlobSha": "bac8e79e444a15b45b2563f3ea648a34b11b860f",
       "bytes": 4812
+    },
+    {
+      "path": "media/opengym/7587.mp4",
+      "sourcePath": "catalogue/media/clip/7587.mp4",
+      "gitBlobSha": "ccc9c20afbe2b739284cee0d0273469a2c9016d7",
+      "bytes": 17951
+    },
+    {
+      "path": "media/opengym/7587.webp",
+      "sourcePath": "catalogue/media/still/7587.webp",
+      "gitBlobSha": "17e88330844ab368a8b5694513d96b3a6f0b43a9",
+      "bytes": 6764
+    },
+    {
+      "path": "media/opengym/3925.mp4",
+      "sourcePath": "catalogue/media/clip/3925.mp4",
+      "gitBlobSha": "afe9cdbbb95ec272a22a2abfb730e48162b3e746",
+      "bytes": 18099
+    },
+    {
+      "path": "media/opengym/3925.webp",
+      "sourcePath": "catalogue/media/still/3925.webp",
+      "gitBlobSha": "8c2f091f816ecf8f7f4f636f56798c9f4b32e41a",
+      "bytes": 7394
+    },
+    {
+      "path": "media/opengym/1760.mp4",
+      "sourcePath": "catalogue/media/clip/1760.mp4",
+      "gitBlobSha": "41ef6fb9c9d28a47ef011a363d452faa1daddb10",
+      "bytes": 19952
+    },
+    {
+      "path": "media/opengym/1760.webp",
+      "sourcePath": "catalogue/media/still/1760.webp",
+      "gitBlobSha": "4ddca2dbf30ec4317fd9e37b6b9c166d9f62c099",
+      "bytes": 4536
+    },
+    {
+      "path": "media/opengym/5382.mp4",
+      "sourcePath": "catalogue/media/clip/5382.mp4",
+      "gitBlobSha": "64684964b6a706202c4771ff32152da09496f9eb",
+      "bytes": 19226
+    },
+    {
+      "path": "media/opengym/5382.webp",
+      "sourcePath": "catalogue/media/still/5382.webp",
+      "gitBlobSha": "7f8bf899d3da82fafa635cdd9bf4a00b793dab67",
+      "bytes": 4426
+    },
+    {
+      "path": "media/opengym/2949.mp4",
+      "sourcePath": "catalogue/media/clip/2949.mp4",
+      "gitBlobSha": "a43672e83f50d0eb4c0e8099e7e45217586667ff",
+      "bytes": 14763
+    },
+    {
+      "path": "media/opengym/2949.webp",
+      "sourcePath": "catalogue/media/still/2949.webp",
+      "gitBlobSha": "e49c92689d50b3966608be3925ee94f249684721",
+      "bytes": 3528
+    },
+    {
+      "path": "media/opengym/1503.mp4",
+      "sourcePath": "catalogue/media/clip/1503.mp4",
+      "gitBlobSha": "eb17d71c7e964aefc1ef5d83eda52e79f9b262d2",
+      "bytes": 16163
+    },
+    {
+      "path": "media/opengym/1503.webp",
+      "sourcePath": "catalogue/media/still/1503.webp",
+      "gitBlobSha": "34f84090636325d7d54e71161ae176381222e006",
+      "bytes": 4930
+    },
+    {
+      "path": "media/opengym/8365.mp4",
+      "sourcePath": "catalogue/media/clip/8365.mp4",
+      "gitBlobSha": "c88fac034e863ef6fb4bf8db210c2d8a735d7631",
+      "bytes": 62039
+    },
+    {
+      "path": "media/opengym/8365.webp",
+      "sourcePath": "catalogue/media/still/8365.webp",
+      "gitBlobSha": "3da891a6d9d6b4ce48463ce7393310652456e951",
+      "bytes": 3246
+    },
+    {
+      "path": "media/opengym/6350.mp4",
+      "sourcePath": "catalogue/media/clip/6350.mp4",
+      "gitBlobSha": "b29c239f17df8c639643dc5d6a6eda9dec1fa107",
+      "bytes": 12398
+    },
+    {
+      "path": "media/opengym/6350.webp",
+      "sourcePath": "catalogue/media/still/6350.webp",
+      "gitBlobSha": "4d825b21c51d333d2a5c7fc4226173320748dea6",
+      "bytes": 3304
+    },
+    {
+      "path": "media/opengym/4559.mp4",
+      "sourcePath": "catalogue/media/clip/4559.mp4",
+      "gitBlobSha": "e89a4d1bbee0ffa626ace41b0369a2a1939dc013",
+      "bytes": 18617
+    },
+    {
+      "path": "media/opengym/4559.webp",
+      "sourcePath": "catalogue/media/still/4559.webp",
+      "gitBlobSha": "c5a3459bce4024d38adcb808e58b144bde24c151",
+      "bytes": 4706
+    },
+    {
+      "path": "media/opengym/5390.mp4",
+      "sourcePath": "catalogue/media/clip/5390.mp4",
+      "gitBlobSha": "1a155d9d7de10eeba53b9b2a66ffb51874ce5010",
+      "bytes": 25114
+    },
+    {
+      "path": "media/opengym/5390.webp",
+      "sourcePath": "catalogue/media/still/5390.webp",
+      "gitBlobSha": "804b4d47313bd205d5a2a15dcb64a9df411a9bb6",
+      "bytes": 7088
+    },
+    {
+      "path": "media/opengym/5392.mp4",
+      "sourcePath": "catalogue/media/clip/5392.mp4",
+      "gitBlobSha": "3734fab4b36c9b709b1183b8d5dbdc6b9c7097bc",
+      "bytes": 21762
+    },
+    {
+      "path": "media/opengym/5392.webp",
+      "sourcePath": "catalogue/media/still/5392.webp",
+      "gitBlobSha": "701e66954aa5366f2fd0f9a19051d71beef6ac64",
+      "bytes": 4606
+    },
+    {
+      "path": "media/opengym/0921.mp4",
+      "sourcePath": "catalogue/media/clip/0921.mp4",
+      "gitBlobSha": "5e81e517f4454cbf4c9352cfee6be1fabd0a47e8",
+      "bytes": 13656
+    },
+    {
+      "path": "media/opengym/0921.webp",
+      "sourcePath": "catalogue/media/still/0921.webp",
+      "gitBlobSha": "cbdb6097cd2bf198d9703476afdd766d301499d4",
+      "bytes": 4600
+    },
+    {
+      "path": "media/opengym/4117.mp4",
+      "sourcePath": "catalogue/media/clip/4117.mp4",
+      "gitBlobSha": "9fe5c9a06a689f2d508e8baee447b4504ff5fe93",
+      "bytes": 19699
+    },
+    {
+      "path": "media/opengym/4117.webp",
+      "sourcePath": "catalogue/media/still/4117.webp",
+      "gitBlobSha": "d9bd8d54dbe354a6af54dca1119d1e7457f5e598",
+      "bytes": 6750
+    },
+    {
+      "path": "media/opengym/1604.mp4",
+      "sourcePath": "catalogue/media/clip/1604.mp4",
+      "gitBlobSha": "8aa0cb1f1beeb7ee11501c013224259c1e12c3d0",
+      "bytes": 40472
+    },
+    {
+      "path": "media/opengym/1604.webp",
+      "sourcePath": "catalogue/media/still/1604.webp",
+      "gitBlobSha": "c6bab796ffcb6c6046556a77fb0de7b195a09364",
+      "bytes": 5310
+    },
+    {
+      "path": "media/opengym/2571.mp4",
+      "sourcePath": "catalogue/media/clip/2571.mp4",
+      "gitBlobSha": "e2fca3b3941e4a316a82db5efb42c48f76520312",
+      "bytes": 24253
+    },
+    {
+      "path": "media/opengym/2571.webp",
+      "sourcePath": "catalogue/media/still/2571.webp",
+      "gitBlobSha": "bc70aee543d7225070331f5d09766e3bae287f4c",
+      "bytes": 5548
+    },
+    {
+      "path": "media/opengym/8162.mp4",
+      "sourcePath": "catalogue/media/clip/8162.mp4",
+      "gitBlobSha": "774b29b71018ca271460367abb5278626efc40d9",
+      "bytes": 24592
+    },
+    {
+      "path": "media/opengym/8162.webp",
+      "sourcePath": "catalogue/media/still/8162.webp",
+      "gitBlobSha": "49ac8bde6a3bf7a64356055d2cc1186421b62d08",
+      "bytes": 5236
+    },
+    {
+      "path": "media/opengym/4217.mp4",
+      "sourcePath": "catalogue/media/clip/4217.mp4",
+      "gitBlobSha": "759d0f9539ff4349d0d23cf160da148982d6ed45",
+      "bytes": 23770
+    },
+    {
+      "path": "media/opengym/4217.webp",
+      "sourcePath": "catalogue/media/still/4217.webp",
+      "gitBlobSha": "81ff7172c39040aad408b57a2d4196e00fcf6b24",
+      "bytes": 7932
     }
   ]
 }
