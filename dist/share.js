@@ -25,7 +25,7 @@ function shareData() {
     })
   }));
   return {
-    label: s.label, muscles: s.muscles, items, done, total, volume,
+    label: s.label, muscles: s.muscles, custom: !!s.custom, items, done, total, volume,
     date: now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
     weekday: now.toLocaleDateString('zh-CN', { weekday: 'long' }),
     file: `训练-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}-${s.label}.png`
@@ -95,11 +95,10 @@ function drawShareImage(data) {
   ctx.fillText(data.weekday, right, M + 78);
   ctx.textAlign = 'left';
   ctx.fillStyle = c.ink;
-  ctx.font = `600 46px ${SHARE_SERIF}`;
-  ctx.fillText(`今天，练${data.label[0]}。`, left, M + 150);
+  shareFitText(ctx, data.custom ? `今天，${data.label}。` : `今天，练${data.label[0]}。`, left, M + 150, innerW, 600, 46, SHARE_SERIF);
   ctx.fillStyle = c.muted;
   ctx.font = `400 18px ${SHARE_FONT}`;
-  ctx.fillText(`${data.label} · ${data.muscles}`, left, M + 182);
+  ctx.fillText(data.custom ? `自定义训练 · ${data.muscles}` : `${data.label} · ${data.muscles}`, left, M + 182);
   ctx.strokeStyle = c.line;
   ctx.lineWidth = 1;
   ctx.beginPath();

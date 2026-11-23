@@ -17,6 +17,12 @@ class Dev(SimpleHTTPRequestHandler):
     def log_message(self, fmt, *args):
         pass
 
+    def end_headers(self):
+        # Unversioned asset URLs would otherwise be served from the browser cache while developing.
+        if not self.path.startswith('/training/api/'):
+            self.send_header('Cache-Control', 'no-store')
+        super().end_headers()
+
     def translate_path(self, path):
         return super().translate_path(path[len('/training'):] if path.startswith('/training/') else path)
 

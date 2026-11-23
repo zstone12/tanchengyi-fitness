@@ -10,6 +10,8 @@
     GET    /training/api/records?month=YYYY-MM   当月各天的训练摘要（日历用）
     GET    /training/api/records/YYYY-MM-DD      某天的完整记录
     PUT    /training/api/records/YYYY-MM-DD      {data, summary} 覆盖保存
+    GET    /training/api/templates               自定义训练模板
+    PUT    /training/api/templates               {templates:[...]} 覆盖保存整份模板列表
     POST   /training/api/records/import          {records:[{date,data,summary}]} 仅补充服务器上没有的日期
 
 管理命令（需以服务用户身份运行，才能读写数据库）：
@@ -50,8 +52,11 @@ MAX_IMPORT = 20
 USERNAME_RE = re.compile(r'^[A-Za-z0-9_一-鿿]{2,20}$')
 DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 MONTH_RE = re.compile(r'^\d{4}-\d{2}$')
-DAYS = ('push', 'pull', 'legs')
-ROUTES = ('me', 'register', 'login', 'logout', 'records')
+DAY_KEY_RE = re.compile(r'^[a-z0-9-]{1,40}$')
+MAX_DAYS_PER_RECORD = 12
+MAX_TEMPLATES = 60
+MAX_TEMPLATE_BYTES = 64 * 1024
+ROUTES = ('me', 'register', 'login', 'logout', 'records', 'templates')
 
 _local = threading.local()
 _scrypt_slots = threading.BoundedSemaphore(3)  # scrypt uses ~16 MB per call; cap concurrency.
@@ -102,6 +107,11 @@ def init_db():
             updated_at INTEGER NOT NULL,
             PRIMARY KEY (user_id, date)
         ) WITHOUT ROWID;
+        CREATE TABLE IF NOT EXISTS templates (
+            user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+            data TEXT NOT NULL,
+            updated_at INTEGER NOT NULL
+        );
     ''')
 
 
@@ -169,7 +179,7 @@ def clean_record(body):
     if not isinstance(data, dict) or not isinstance(summary, dict):
         raise ApiError(400, '记录格式不正确。')
     kept = {}
-    for key in ('sets', 'weights', 'reps', 'layouts'):
+    for key in ('sets', 'weights', 'reps', 'layouts', 'plans'):
         part = data.get(key, {})
         if not isinstance(part, dict):
             raise ApiError(400, '记录格式不正确。')
@@ -180,13 +190,17 @@ def clean_record(body):
     days = {}
     raw_days = summary.get('days')
     if isinstance(raw_days, dict):
-        for day in DAYS:
-            item = raw_days.get(day)
-            if isinstance(item, dict) and number(item.get('done'), True) > 0:
+        for day, item in raw_days.items():
+            if len(days) >= MAX_DAYS_PER_RECORD:
+                break
+            if isinstance(day, str) and DAY_KEY_RE.match(day) and isinstance(item, dict) and number(item.get('done'), True) > 0:
                 days[day] = {'done': number(item.get('done'), True), 'volume': number(item.get('volume'))}
+                # The label lets the calendar name a custom session even after its template is gone.
+                if isinstance(item.get('label'), str) and item['label'].strip():
+                    days[day]['label'] = re.sub(r'[<>&"\'`\\]', '', item['label']).strip()[:12]
     done = number(summary.get('done'), True)
     clean = {'done': done, 'volume': number(summary.get('volume')), 'days': days}
-    return data_json, json.dumps(clean, separators=(',', ':')), done
+    return data_json, json.dumps(clean, ensure_ascii=False, separators=(',', ':')), done
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -408,6 +422,28 @@ class Handler(BaseHTTPRequestHandler):
                 (user['id'], date, data_json, summary_json, done, now_ms()))
             imported += cursor.rowcount
         self.send_json(200, {'imported': imported})
+
+
+    # ---- templates ------------------------------------------------------
+    def get_templates(self, rest, query):
+        user = self.require_user()
+        row = db().execute('SELECT data, updated_at FROM templates WHERE user_id = ?', (user['id'],)).fetchone()
+        self.send_json(200, {'templates': json.loads(row['data']) if row else [], 'updatedAt': row['updated_at'] if row else 0})
+
+    def put_templates(self, rest, query):
+        user = self.require_user()
+        templates = self.read_body().get('templates')
+        if not isinstance(templates, list) or len(templates) > MAX_TEMPLATES or not all(isinstance(t, dict) for t in templates):
+            raise ApiError(400, '模板格式不正确。')
+        data_json = json.dumps(templates, ensure_ascii=False, separators=(',', ':'))
+        if len(data_json.encode('utf-8')) > MAX_TEMPLATE_BYTES:
+            raise ApiError(413, '模板内容过大。')
+        limit('write', user['id'], 240, 60)
+        updated = now_ms()
+        db().execute('INSERT INTO templates (user_id, data, updated_at) VALUES (?, ?, ?) '
+                     'ON CONFLICT(user_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at',
+                     (user['id'], data_json, updated))
+        self.send_json(200, {'updatedAt': updated})
 
 
 def admin(argv):

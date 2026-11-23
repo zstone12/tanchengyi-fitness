@@ -2,7 +2,8 @@
 // 不登录：记录只留在本浏览器（与原来一致）。登录后：当天记录自动保存到账号，日历读取账号数据。
 // 本地始终是当天记录的工作副本；服务器按「用户 + 日期」整天覆盖保存。
 const ACCOUNT_API = 'api/';
-const DAY_PARTS = { sets: '-sets', weights: '-weights', reps: '-reps', layouts: '-set-layouts' };
+// plans holds a copy of each custom template used that day, so old records still read correctly after the template is edited or deleted.
+const DAY_PARTS = { sets: '-sets', weights: '-weights', reps: '-reps', layouts: '-set-layouts', plans: '-plans' };
 let account = null, accountChecked = false, syncState = 'idle', editSeq = 0, pushTimer = null, retryTimer = null, syncChain = Promise.resolve(), accountMode = 'login';
 const calendar = { year: new Date().getFullYear(), month: new Date().getMonth(), records: new Map(), selected: null, detail: null, loading: false, failed: false, loaded: false, token: 0 };
 
@@ -25,12 +26,28 @@ function writeDay(iso, data) {
   try { for (const [part, suffix] of Object.entries(DAY_PARTS)) localStorage.setItem(prefix + suffix, JSON.stringify(data[part] || {})); } catch {}
   dropDayCaches();
 }
-function isEmptyDay(data) { return Object.values(data).every(part => !Object.keys(part).length); }
+function isEmptyDay(data) { return Object.entries(data).every(([part, value]) => part === 'plans' || !Object.keys(value).length); }
+function dayPlan(data, dayKey) {
+  const plan = data.plans?.[dayKey];
+  if (plan && typeof plan.label === 'string' && Array.isArray(plan.items) && plan.items.every(item => Array.isArray(item) && typeof item[0] === 'string' && typeof item[1] === 'string' && Array.isArray(item[2]))) return { label: cleanText(plan.label, 12), custom: true, items: plan.items.map(([id, title, planned]) => [id, cleanText(title, 24), planned.map(target => cleanText(target, 12))]) };
+  return sessions[dayKey] || null;
+}
+function dayKeys(data) { return [...new Set([...Object.keys(sessions), ...Object.keys(data.plans || {})])]; }
+// Keeps today's copy of the custom template in step with what is being recorded.
+function snapshotPlan(iso) {
+  if (!sessions[day]?.custom) return;
+  const key = localPrefix(iso) + DAY_PARTS.plans, plans = readDay(iso).plans, next = { label: sessions[day].label, items: sessions[day].items.map(([id, title, planned]) => [id, title, planned]) };
+  if (JSON.stringify(plans[day]) === JSON.stringify(next)) return;
+  plans[day] = next;
+  try { localStorage.setItem(key, JSON.stringify(plans)); } catch {}
+}
 function onWorkoutPage() { return (location.hash.slice(1) || 'home').split('/')[0] === 'workout'; }
 
 // One day's record as exercise rows, for any date and training day. Mirrors exerciseSets / repsValue in workout.js.
 function recordRows(data, dayKey) {
-  return sessions[dayKey].items.map(([id, title, planned]) => {
+  const plan = dayPlan(data, dayKey);
+  if (!plan) return [];
+  return plan.items.map(([id, title, planned]) => {
     const saved = data.layouts[`${dayKey}:${id}`];
     const layout = Array.isArray(saved) && saved.length && saved.every(s => s && typeof s.key === 'string' && typeof s.target === 'string') ? saved : planned.map((target, index) => ({ key: String(index), target }));
     return { id, title, sets: layout.map(set => {
@@ -46,14 +63,14 @@ function recordRows(data, dayKey) {
 function trainingSummary(data) {
   const days = {};
   let done = 0, volume = 0;
-  for (const dayKey of Object.keys(sessions)) {
+  for (const dayKey of dayKeys(data)) {
     let dayDone = 0, dayVolume = 0;
     recordRows(data, dayKey).forEach(e => e.sets.forEach(set => {
       if (!set.complete) return;
       dayDone++;
       if (set.weight !== '' && set.reps !== '') dayVolume += set.weight * set.reps;
     }));
-    if (dayDone) { days[dayKey] = { done: dayDone, volume: Math.round(dayVolume * 100) / 100 }; done += dayDone; volume += dayVolume; }
+    if (dayDone) { days[dayKey] = { done: dayDone, volume: Math.round(dayVolume * 100) / 100, label: dayPlan(data, dayKey).label }; done += dayDone; volume += dayVolume; }
   }
   return { done, volume: Math.round(volume * 100) / 100, days };
 }
@@ -102,6 +119,7 @@ function syncFailed(error) {
 function trainingSaved() {
   editSeq++;
   const iso = isoDate(), meta = read(syncKey(iso), { at: 0 });
+  snapshotPlan(iso);
   if (!meta.dirty) { meta.dirty = true; save(syncKey(iso), meta); }
   refreshCalendarToday();
   if (account) { clearTimeout(pushTimer); setSync('syncing'); pushTimer = setTimeout(() => { pushTimer = null; pushDay(isoDate()); }, 900); }
@@ -185,9 +203,10 @@ async function importLocalHistory() {
 async function afterSignIn() {
   updateAccountUi();
   const imported = await importLocalHistory();
+  const templatesChanged = await syncTemplates();
   const replaced = await pullToday();
   flushDirty();
-  if (replaced && onWorkoutPage()) render(false);
+  if ((replaced || templatesChanged) && onWorkoutPage()) render(false);
   loadCalendar();
   return imported;
 }
@@ -294,6 +313,7 @@ async function signOut() {
   account = null;
   syncState = 'idle';
   forgetSyncedDays();
+  forgetSyncedTemplates();
   accountDialog().close();
   updateAccountUi();
   if (onWorkoutPage()) render(false);
@@ -302,7 +322,8 @@ async function signOut() {
 }
 
 // ---- calendar -----------------------------------------------------------
-function dayNames(summary) { return Object.keys(summary.days || {}).filter(key => sessions[key]).map(key => sessions[key].label); }
+function dayLabel(summary, key) { return cleanText(summary.days[key].label, 12) || sessions[key]?.label || ''; }
+function dayNames(summary) { return Object.keys(summary.days || {}).map(key => dayLabel(summary, key)).filter(Boolean); }
 function formatKg(value) { return String(Math.round(value * 100) / 100).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
 function calendarDetailHtml() {
   const iso = calendar.selected;
@@ -312,7 +333,7 @@ function calendarDetailHtml() {
   const head = `<div class="calendar-detail-head"><strong>${month}月${date}日</strong><span>完成 ${summary.done} 组${summary.volume ? ` · ${formatKg(summary.volume)} kg` : ''}</span></div>`;
   if (!calendar.detail || calendar.detail.iso !== iso) return head + '<p class="calendar-empty">正在载入…</p>';
   if (!calendar.detail.data) return head + '<p class="calendar-empty">当天的明细暂时未能载入，请稍后再试。</p>';
-  return head + Object.keys(summary.days || {}).filter(key => sessions[key]).map(key => `<div class="calendar-session"><div class="calendar-session-name">${sessions[key].label}<small>${sessions[key].muscles}</small></div><ul>${recordRows(calendar.detail.data, key).filter(e => e.sets.some(set => set.complete)).map(e => `<li><span>${esc(e.title)}</span><span class="calendar-sets">${e.sets.filter(set => set.complete).map(set => `${set.weight === '' ? '' : set.weight + 'kg'}×${set.reps === '' ? '—' : set.reps}`).join('　')}</span></li>`).join('')}</ul></div>`).join('');
+  return head + Object.keys(summary.days || {}).filter(key => dayLabel(summary, key)).map(key => `<div class="calendar-session"><div class="calendar-session-name">${dayLabel(summary, key)}<small>${BUILTIN_DAYS.includes(key) ? sessions[key].muscles : '自定义训练'}</small></div><ul>${recordRows(calendar.detail.data, key).filter(e => e.sets.some(set => set.complete)).map(e => `<li><span>${esc(e.title)}</span><span class="calendar-sets">${e.sets.filter(set => set.complete).map(set => `${set.weight === '' ? '' : set.weight + 'kg'}×${set.reps === '' ? '—' : set.reps}`).join('　')}</span></li>`).join('')}</ul></div>`).join('');
 }
 function calendarHtml() {
   const { year, month, records } = calendar, today = isoDate(), now = new Date();
@@ -420,7 +441,9 @@ async function initAccount() {
   document.addEventListener('visibilitychange', async () => {
     if (document.hidden || !account) return;
     flushDirty();
-    if (!read(syncKey(isoDate()), {}).dirty && await pullToday() && onWorkoutPage()) { render(false); loadCalendar(); }
+    const templatesChanged = await syncTemplates();
+    const replaced = !read(syncKey(isoDate()), {}).dirty && await pullToday();
+    if ((templatesChanged || replaced) && onWorkoutPage()) { render(false); loadCalendar(); }
   });
   window.addEventListener('online', flushDirty);
 }

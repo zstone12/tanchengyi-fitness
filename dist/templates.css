@@ -1,0 +1,62 @@
+/* 自定义训练：训练日选择条、模板弹窗、无示范动画的动作卡 */
+.training-page .day-cards{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.training-page .day-cards::-webkit-scrollbar{display:none}
+.training-page .day-card{flex:1 0 auto;white-space:nowrap}
+.training-page .day-card.is-custom strong{max-width:9em;overflow:hidden;text-overflow:ellipsis}
+.training-page .day-card-manage{flex:0 0 auto;color:var(--muted)}
+.training-page .day-card-manage strong{font-weight:500;color:var(--gold)}
+.template-edit-link{border:0;padding:0;font-size:12px;color:var(--gold);text-decoration:underline;text-underline-offset:3px;min-height:24px}
+.exercise-thumb-empty{display:flex;align-items:center;justify-content:center;background:var(--panel);color:var(--muted);font-size:18px;border-radius:8px;aspect-ratio:1;min-width:64px}
+span.exercise-title{cursor:default}
+
+#template-dialog{width:min(520px,94vw);max-height:90vh;padding:20px;overflow:auto;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.6}
+#template-dialog::backdrop{background:#0000008c}
+#template-dialog .dialog-head{align-items:flex-start;gap:12px;margin-bottom:14px}
+#template-dialog .eyebrow{font-size:11px;letter-spacing:1px}
+#template-dialog h2{font-size:18px;line-height:1.4;margin:2px 0 0}
+#template-close{min-width:44px;min-height:44px;border-color:transparent;font-size:22px;line-height:1;padding:0}
+#template-dialog .primary{display:block;width:100%;margin:0;min-height:46px;border-radius:6px;background:var(--ink);border-color:var(--ink);color:var(--bg);font-size:15px}
+#template-dialog .primary:hover{opacity:.88;background:var(--ink);color:var(--bg)}
+#template-dialog button:disabled{opacity:.45;cursor:default}
+.template-empty{margin:4px 0 14px;color:var(--muted);font-size:13px}
+.template-list{list-style:none;margin:0 0 14px;padding:0;border-top:1px solid var(--line)}
+.template-list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.template-list li>div:first-child{min-width:0}
+.template-list strong{display:block;font-size:15px}
+.template-list small{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.template-row-actions{display:flex;gap:6px;flex:0 0 auto}
+.template-row-actions button{min-height:40px;padding:6px 12px;font-size:13px}
+.template-row-actions .is-danger{color:#8a2c1d;border-color:#b5432f66;background:#b5432f14}
+html.dark .template-row-actions .is-danger{color:#f0a999}
+.template-section-title{display:flex;align-items:baseline;justify-content:space-between;margin:4px 0 8px;font-size:13px;font-weight:600}
+.template-section-title small{font-weight:400;font-size:12px;color:var(--muted)}
+.template-items{list-style:none;margin:0 0 12px;padding:0}
+.template-items li{padding:10px 12px;margin-bottom:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.template-item-head{display:flex;align-items:center;gap:10px}
+.template-item-head img,.template-option img,.template-thumb-empty{flex:0 0 auto;width:44px;height:44px;border-radius:6px;background:#fff;object-fit:cover}
+.template-thumb-empty{display:flex;align-items:center;justify-content:center;background:var(--panel);color:var(--muted);font-size:14px}
+.template-item-head strong{flex:1;min-width:0;font-size:14px;line-height:1.4}
+.template-item-moves{display:flex;gap:2px;flex:0 0 auto}
+.template-item-moves button{min-width:36px;min-height:36px;padding:0;border-color:transparent;font-size:16px;line-height:1;color:var(--muted)}
+.template-item-moves button:not(:disabled):hover{background:var(--panel);color:var(--ink)}
+.template-item-fields{display:grid;grid-template-columns:72px 1fr 88px;gap:8px;margin-top:10px}
+.template-item-fields label>span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+.template-item-fields input,#template-search{display:block;width:100%;box-sizing:border-box;min-height:40px;padding:6px 10px;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px}
+.template-item-fields input:focus-visible,#template-search:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+#template-add{width:100%;min-height:44px;border-style:dashed;color:var(--ink)}
+#template-add:not(:disabled):hover{background:var(--panel)}
+.template-actions{display:flex;gap:10px;margin-top:16px}
+.template-actions #template-cancel{flex:0 0 96px;min-height:46px}
+.template-catalog{max-height:44vh;overflow:auto;margin:12px 0;padding-right:2px;-webkit-overflow-scrolling:touch}
+.template-catalog h3{font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 6px}
+.template-catalog section:first-child h3{margin-top:0}
+.template-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.template-option{display:flex;align-items:center;gap:8px;text-align:left;min-height:56px;padding:5px 8px 5px 5px;border-radius:8px;font-size:13px;line-height:1.35;background:var(--paper)}
+.template-option span{flex:1;min-width:0}
+.template-option em{flex:0 0 auto;font-style:normal;color:var(--muted);font-size:14px}
+.template-option.is-chosen{background:var(--done-bg,#eaf0e9);border-color:var(--done-ink,#35543d);color:var(--done-ink,#35543d)}
+.template-option.is-chosen em{color:inherit;font-weight:700}
+.template-custom{display:flex;align-items:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.template-custom .account-field{flex:1;margin:0}
+.template-custom button{flex:0 0 auto;min-height:44px}
+@media(max-width:600px){#template-dialog{padding:16px}.template-options{grid-template-columns:1fr}.template-item-fields{grid-template-columns:64px 1fr 80px}.training-page .day-card{flex:1 0 auto;padding-left:12px;padding-right:12px}}
