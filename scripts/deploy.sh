@@ -145,7 +145,9 @@ cp -R "$STAGE/web" "$RELEASE"
 chmod -R u=rwX,go=rX "$RELEASE"
 # 动作素材共用一份：仓库自带的文件只在共享目录缺少时补进去，然后版本目录里改成软链接。
 if [ ! -d "$MEDIA_DIR" ]; then mkdir -p "$MEDIA_DIR"; chown www-data:www-data "$(dirname "$MEDIA_DIR")" "$MEDIA_DIR"; fi
-cp -Rn "$RELEASE/media/opengym/." "$MEDIA_DIR/"
+for bundled in "$RELEASE"/media/opengym/*; do
+  if [ -f "$bundled" ] && [ ! -e "$MEDIA_DIR/$(basename "$bundled")" ]; then cp "$bundled" "$MEDIA_DIR/"; fi
+done
 chown -R www-data:www-data "$MEDIA_DIR"
 rm -rf "$RELEASE/media/opengym"
 ln -s "$MEDIA_DIR" "$RELEASE/media/opengym"
