@@ -70,3 +70,6 @@ html.dark .sync-status-text.is-error{color:#f0a999}
 @media(max-width:760px){.calendar-body{grid-template-columns:1fr;gap:0;padding:0 12px 14px}.calendar-month{max-width:420px;width:100%;margin:0 auto}.calendar-side{padding-top:12px}}
 @media(max-width:600px){#account-open{max-width:84px;padding:6px 8px;font-size:13px}.training-calendar>summary{padding:10px 12px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){.calendar-toggle{transition:none}}
+
+footer p a{text-decoration:underline;text-underline-offset:3px}
+footer p a:hover{color:var(--gold)}
