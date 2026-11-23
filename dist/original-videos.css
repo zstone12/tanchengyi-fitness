@@ -16,3 +16,13 @@
 .exercise-guidance{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;margin:18px 0 0}.exercise-guidance summary{padding:12px 0 0;font-size:12px;color:var(--gold)}.exercise-guidance p{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.9}
 @media(max-width:760px){.original-day-panel{align-items:flex-start;flex-direction:column;gap:18px}.original-day-actions{justify-content:flex-start}.original-day-actions>a{width:auto;text-align:left}.original-day-heading h2{font-size:20px}.video-hub-intro{flex-wrap:wrap;gap:18px}.video-hub-intro>a{margin-left:0;width:100%}.original-grid{grid-template-columns:1fr}.plan-context{display:block}.plan-context a{display:inline-block;margin-top:6px}}
 @media(max-width:450px){.original-day-actions{gap:8px}.original-day-actions>a{display:block;width:100%;margin-top:4px}.original-card{padding:21px}.original-card h3{font-size:20px}.warmup-originals{padding:0 17px 16px}.warmup-originals>span{width:100%}#original-video-dialog{padding:18px}#original-player-title{font-size:20px}#original-player-stage{aspect-ratio:16/10;max-height:58vh}.original-player-footer{display:block}.original-player-footer a{display:inline-block;margin-top:10px}.video-hub-intro p{font-size:14px}.video-hub-intro .lesson-seal{width:40px;height:54px}}
+
+#original-chapters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 18px}
+#original-chapters[hidden]{display:none}
+.original-chapter{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:5px;background:var(--paper);font-size:12px;line-height:1.5}
+.original-chapter small{font:11px system-ui;color:var(--muted);font-variant-numeric:tabular-nums}
+.original-chapter.selected{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.original-chapter.selected small{color:var(--bg)}
+.original-version-note{padding:10px 12px;border-left:2px solid var(--gold);background:var(--soft);font-size:12px;line-height:1.8}
+@media(max-width:600px){#original-chapters{gap:6px}.original-chapter{flex:1 1 calc(50% - 6px);justify-content:space-between;font-size:11px;padding:8px}#original-external{line-height:1.8}}
+@media(min-width:761px){#original-video-dialog #original-player-stage{aspect-ratio:16/9;max-height:52vh}}

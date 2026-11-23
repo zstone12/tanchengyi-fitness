@@ -1,0 +1,84 @@
+{
+  "version": "0.1",
+  "project": {
+    "name": "谭师训练手册",
+    "goal": "压缩进入训练记录前的非核心内容，统一输入与组数操作。",
+    "audience": "使用当前站点记录训练的用户；未开展用户研究。",
+    "task": "选择训练日，填写重量和次数，勾选完成，并按需调整组数或查看动作视频。",
+    "source": "server2 /var/www/tanchengyi-releases/20261029-edit-sets; git HEAD 8672b551af515b92ac7eb2a76dbe6cdc0e36a81a plus existing uncommitted changes"
+  },
+  "evidence": [
+    {
+      "id": "before-phone-sets",
+      "state": "390px iframe / chest / editing sets",
+      "observation": "本会话上一轮浏览器截图显示每组记录可用，删除模式增加第五列；新增与删减为卡片底部文字操作。",
+      "origin": "browser"
+    },
+    {
+      "id": "before-desktop-sets",
+      "state": "desktop / incline / batch expanded / completed first row",
+      "observation": "本会话浏览器截图显示动作说明在左、记录在右，完成行四格加深；说明区、记录标题与批量填写的字号和间隔不统一。",
+      "origin": "browser"
+    },
+    {
+      "id": "source-top-layout",
+      "state": "baseline source",
+      "observation": "workout() 在动作清单前依次输出标题、单独名言块、训练日标题、训练日卡片、原版视频、进度、默认展开的热身与说明。",
+      "origin": "source-code"
+    },
+    {
+      "id": "source-refined",
+      "state": "isolated worktree / all three days",
+      "observation": "新版模板三个训练日均生成 5 张动作卡，默认 19/19/17 组，逐组输入与完成按钮数一致；所有输入有可访问名称，ID 无重复。训练准备默认折叠。",
+      "origin": "source-code"
+    },
+    {
+      "id": "browser-unavailable",
+      "state": "after change capture attempt",
+      "observation": "CUA Chrome 与 Firefox 返回 cgWindowNotFound，浏览器 host 不可用。本轮尚无修改后的实际渲染证据。",
+      "origin": "browser"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "title": "训练前内容的视觉优先级高于记录任务",
+      "evidenceIds": [
+        "source-top-layout"
+      ],
+      "impact": 4,
+      "confidence": 4,
+      "effort": 2,
+      "proposal": "合并为紧凑标题、训练日选择与横向进度；热身和完整跟练放入明确标注的训练准备折叠区。动作视频仍在动作旁直接可用。"
+    },
+    {
+      "id": "F2",
+      "title": "记录区层级和动作区字体节奏不一致",
+      "evidenceIds": [
+        "before-desktop-sets"
+      ],
+      "impact": 3,
+      "confidence": 4,
+      "effort": 2,
+      "proposal": "操作界面统一无衬线字体，标题保留手册衬线风格；记录标题与批量填写同行，输入统一40px高度，限定桌面内容宽度。"
+    },
+    {
+      "id": "F3",
+      "title": "新增组与删减组操作缺少统一的区域与状态",
+      "evidenceIds": [
+        "before-phone-sets"
+      ],
+      "impact": 3,
+      "confidence": 4,
+      "effort": 1,
+      "proposal": "组次表底部统一操作条，新增按钮有边界，删减模式有选中状态；仅调整时显示删除列，保留撤销。"
+    }
+  ],
+  "review": {
+    "status": "needs-evidence",
+    "before": "同会话桌面与390px截图；当前线上版本20261029-edit-sets，精确文件摘要见配套Markdown。",
+    "after": "源码渲染与语法检查通过；当前无法获取浏览器窗口。",
+    "judgment": "pending",
+    "reason": "使用 HappyHands 技能方法进行手动审阅与实施；未运行完整 Harness、独立模型复核或真机验收。不把源码检查当作视觉通过。"
+  }
+}

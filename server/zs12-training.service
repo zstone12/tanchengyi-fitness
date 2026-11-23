@@ -1,0 +1,21 @@
+[Unit]
+Description=ZS12 training accounts and records
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/opt/zs12-training
+Environment=TRAINING_PORT=3014
+Environment=TRAINING_ORIGINS=https://zstone12.xyz
+ExecStart=/usr/bin/python3 /opt/zs12-training/server.py
+Restart=on-failure
+StateDirectory=zs12-training
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

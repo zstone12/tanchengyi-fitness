@@ -1,0 +1,118 @@
+/* Taste Skill: Editorial greeting. Existing paper palette and Chinese brand retained.
+   Canvas: 1100px; 12 columns, 16px gutters. Exercise split: 5/12 + 7/12.
+   Controls remain native; the training log is the primary working surface. */
+.training-page{--bg:#f6f5f1;--paper:#fffefa;--panel:#eeede7;--ink:#292d29;--muted:#65695f;--line:#e1e2d9;--gold:#82602f;--soft:#82602f0c;--control-height:44px;--done-bg:#eaf0e9;--done-ink:#35543d;--control-border:#c7cbc0;font-size:14px;line-height:1.6}
+html.dark .training-page{--bg:#161715;--paper:#1f211e;--panel:#282b26;--ink:#eeefe9;--muted:#b4b9ad;--line:#373c33;--gold:#d4b27a;--soft:#d4b27a12;--done-bg:#293c2e;--done-ink:#b5d5bb;--control-border:#646c5e}
+.training-page header{height:64px;padding:0 max(24px,calc((100% - 1100px)/2));gap:24px;background:var(--paper);border-bottom:1px solid var(--line)}
+.training-page .brand{font-size:18px;gap:10px}
+.training-page .brand small{font-size:11px;letter-spacing:.5px}
+.training-page .seal{width:32px;height:36px;border:0;background:var(--panel);font-size:25px;color:var(--ink)}
+.training-page header nav{gap:24px;font-size:14px;white-space:nowrap}
+.training-page nav a[href="#workout"]{color:var(--ink);text-decoration:none;position:relative}
+.training-page nav a[href="#workout"]:after{content:"";position:absolute;bottom:-21px;left:0;right:0;height:2px;background:var(--ink)}
+.training-page .nav-tools{gap:4px}.training-page .nav-tools button{min-width:44px;min-height:44px}.training-page .nav-tools kbd{display:none}
+.training-page .training-wrap{max-width:1164px;padding:28px 32px 0}
+.training-title{gap:16px;align-items:center}
+.training-title .breadcrumb{font-size:12px;margin:0 0 6px;color:var(--muted)}
+.training-title h1{font-size:30px;line-height:1.35;letter-spacing:0;margin:0;color:var(--ink)}
+.training-day-label{font-size:14px;line-height:1.6;letter-spacing:0;color:var(--ink);text-align:right}
+.training-day-label small{font-size:12px;letter-spacing:0;margin:0;color:var(--muted)}
+.training-intro{margin:8px 0 20px;gap:12px}.training-intro p,.training-intro>span{font-size:12px}
+.training-dashboard{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:center;margin-bottom:16px}
+.day-cards{grid-column:span 7;gap:0;padding:0;background:none;border-radius:0;border-bottom:1px solid var(--line)}
+.day-card{border:0;border-radius:0;padding:10px 12px 12px;color:var(--muted);position:relative;background:none;min-height:68px;transition:background .15s ease}
+.day-card strong{font-size:16px;font-weight:500;justify-content:flex-start;gap:8px;line-height:1.5}
+.day-card strong span{font-size:12px}.day-card small{font-size:12px;line-height:1.5;margin:3px 0 0;min-height:0}
+.day-card.selected{background:none;border:0;box-shadow:none;color:var(--ink)}
+.day-card.selected strong{color:var(--ink);font-weight:600}
+.day-card.selected:after{content:"";position:absolute;bottom:-1px;left:12px;right:12px;height:2px;background:var(--ink)}
+.day-card:hover{background:var(--panel)}
+.session-progress{grid-column:span 5;grid-template-columns:1fr auto;gap:6px 16px;padding:12px 16px;margin:0;background:var(--panel);border:0;border-radius:8px}
+.session-progress>div:first-child{display:flex;gap:12px;align-items:baseline}
+.session-progress .subtle,.session-progress>div>div>span{font-size:12px}
+.session-progress>div>div>strong{font:400 24px/1.1 var(--workout-ui-font);font-variant-numeric:tabular-nums}
+.session-progress>strong{font:400 14px/1.5 var(--workout-ui-font);color:var(--muted)}
+.session-progress .progress-track{grid-column:1/-1;height:4px;background:var(--control-border);margin:2px 0 0}
+.session-progress .progress-track span{background:var(--gold)}
+.session-progress p{display:none}
+.training-preparation{margin:0 0 24px;background:none;border:0;border-radius:0}
+.training-preparation>summary{padding:6px 0;font-size:14px;min-height:44px}
+.preparation-subtitle{font-size:12px;margin-left:12px}.preparation-toggle{color:var(--muted)}
+.preparation-content{padding:0 16px 16px;border:0;background:var(--paper);border-radius:8px}
+.training-preparation .warmup-item strong,.training-preparation .original-button{font-size:13px}
+.training-preparation .warmup-item small,.training-preparation .demo-link,.training-preparation .warmup-footnote,.training-preparation .original-day-heading p{font-size:12px}
+.training-section-head{margin:0 0 12px}.training-section-head h2{font-size:16px;font-weight:600}.training-section-head>span{font-size:12px}
+.exercise-cards{gap:16px}
+.training-card{padding:20px 24px;border:0;border-radius:8px;background:var(--paper);box-shadow:none;scroll-margin-top:84px;gap:0 24px;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.training-card-top{margin:0 0 12px;padding:0;border:0}
+.exercise-order{font-size:12px;letter-spacing:0}
+.training-card-top .exercise-progress{font:400 12px/1.5 var(--workout-ui-font);font-variant-numeric:tabular-nums;padding:3px 8px;border:0;border-radius:4px;background:var(--panel);color:var(--muted)}
+.training-card-top .all-complete{background:var(--done-bg);color:var(--done-ink)}
+.training-exercise-head{grid-template-columns:80px minmax(0,1fr);gap:16px;align-items:center}
+.training-exercise-head>.exercise-thumb{width:80px;border:0;border-radius:4px}
+.exercise-title{font:600 18px/1.5 var(--workout-ui-font);color:var(--ink)}
+.exercise-title>span{color:var(--muted)}
+.exercise-target{font-size:12px;margin:4px 0 0}
+.training-page .exercise-lesson-row{margin-top:4px}
+.training-page .exercise-lesson-row .original-button{font-size:12px;min-height:32px;color:var(--gold);padding:0}
+.exercise-cue{font-size:14px;line-height:1.7;margin:14px 0 0;max-width:40em}
+.training-page .exercise-guidance{margin:8px 0 0}
+.training-page .exercise-guidance>summary{font-size:12px;min-height:36px;padding:8px 0;color:var(--muted)}
+.training-page .exercise-guidance p,.training-page .exercise-variant,.training-page .exercise-en{font-size:12px;line-height:1.7}
+.training-page .exercise-variant{margin:6px 0}
+.exercise-records{padding-left:24px;border-left:1px solid var(--line)}
+.record-panel-label{height:36px;font-size:13px;font-weight:500}
+.exercise-records .weight-batch>summary{font-size:12px;color:var(--muted)}
+.exercise-records .batch-field span,.exercise-records .weight-batch>small{font-size:12px}
+.exercise-records .weight-batch-actions>button{font-size:12px;color:var(--ink)}
+.training-page .set-list-head,.training-page .set-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 44px;gap:12px}
+.training-page .set-list-head{font-size:12px;padding:4px 0 6px}
+.training-page .set-row{padding:4px 0;border:0;border-radius:4px}
+.training-page .set-row .set-number{width:24px;font:400 12px/1 var(--workout-ui-font)}
+.training-page .set-field input{height:44px;border:1px solid var(--control-border);background:var(--paper);border-radius:6px;font:400 17px/1.3 var(--workout-ui-font);font-variant-numeric:tabular-nums;text-align:right;padding:6px 34px 6px 10px}
+.training-page .set-field input::placeholder{font-size:13px;color:var(--muted);opacity:1}
+.training-page .set-field>span{font-size:12px;right:12px;color:var(--muted)}
+.training-page .set-row .set-button{width:44px;height:44px;min-height:44px;border:1px solid var(--control-border);background:var(--paper);border-radius:6px}
+.training-page .set-row .set-status{font-size:22px;color:var(--muted);opacity:.65}
+.training-page .set-row.is-complete .set-number{background:none;color:var(--done-ink);height:44px}
+.training-page .set-row.is-complete .set-field input{background:var(--done-bg);border-color:transparent;color:var(--ink)}
+.training-page .set-row.is-complete .set-field>span,.training-page .set-row.is-complete .set-field input::placeholder{color:var(--muted);opacity:1}
+.training-page .set-row .set-button.complete{background:var(--done-bg);border-color:transparent}
+.training-page .set-row .set-button.complete .set-status{color:var(--done-ink);opacity:1}
+.training-page .set-field input:focus{border-color:var(--gold)}
+.set-count-actions{border:0;margin-top:4px;padding-top:6px;gap:8px}
+.set-count-actions button{font-size:12px;min-height:40px;border:0;background:none;color:var(--ink);padding:8px 0}
+.set-count-actions button:hover{background:none;text-decoration:underline;text-underline-offset:4px}
+.set-count-actions [data-edit-sets]{color:var(--muted);padding-left:12px}
+.training-page .is-editing-sets .set-list-head,.training-page .is-editing-sets .set-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 44px 32px;gap:8px}
+.is-editing-sets .set-remove{width:32px;min-height:44px}
+.training-page .session-dock{width:100%;padding:12px max(24px,calc((100% - 1100px)/2)) max(12px,env(safe-area-inset-bottom));background:var(--paper);box-shadow:none;border-top:1px solid var(--line)}
+.session-actions{gap:16px}.session-dock-label{font-size:14px;font-weight:500}.session-dock-label small{font-size:12px;margin:2px 0 0}
+.training-page #reset-session{font-size:12px;padding:10px 12px;min-height:44px}
+.training-page .session-actions>.primary{flex:0 0 208px;min-height:44px;border-radius:6px;background:var(--ink);border-color:var(--ink);color:var(--paper);font-size:14px}
+.training-page .session-actions>.primary:hover{opacity:.88}
+.rest-dock{font-size:14px}.rest-dock strong{font:400 24px/1.3 var(--workout-ui-font);font-variant-numeric:tabular-nums}.rest-dock button{min-height:44px;font-size:12px}
+.training-page .training-bottom-note{margin:20px 0 32px}.training-bottom-note>summary{min-height:44px}.training-page footer{padding-bottom:180px;font-size:12px}
+.training-page footer p{font-size:12px}.training-page dialog::backdrop{backdrop-filter:none}
+.training-page button{transition:background .15s ease,color .15s ease,border-color .15s ease}
+.training-page button:active{transform:translateY(1px)}
+@media(max-width:1100px){.training-page header{padding:0 24px;gap:16px}.training-page header nav{gap:18px}.training-page .brand small{display:none}.training-page .nav-tools span{display:none}.training-dashboard{grid-template-columns:repeat(12,minmax(0,1fr))}.day-cards{grid-column:span 8}.session-progress{grid-column:span 4}.day-card small{font-size:11px}}
+@media(max-width:819px){.training-page .training-wrap{padding:24px 24px 0}.training-card{display:block;padding:20px}.exercise-records{margin:14px 0 0;padding:12px 0 0;border-left:0;border-top:1px solid var(--line)}.exercise-cue{max-width:none}.training-title h1{font-size:26px}.training-day-label{font-size:12px}.training-dashboard{display:block}.day-cards{margin:0 0 12px}.session-progress{display:grid;grid-template-columns:auto minmax(50px,1fr) auto;gap:12px;background:none;padding:4px 0}.session-progress .progress-track{grid-column:2;grid-row:1}.session-progress>strong{grid-column:3;grid-row:1}.day-card small{font-size:12px}.training-preparation{margin-bottom:18px}}
+@media(max-width:600px){
+ .training-page header{height:auto;min-height:0;gap:6px;padding:8px 16px 0}.training-page .brand{font-size:16px}.training-page .seal{height:32px;width:28px;font-size:24px}.training-page .nav-tools{margin-left:auto}.training-page header nav{width:100%;order:3;gap:8px;padding:0;border-top:0;justify-content:space-between;font-size:12px}.training-page header nav a{min-height:40px;display:flex;align-items:center}.training-page nav a[href="#workout"]:after{bottom:0}
+ .training-page .training-wrap{padding:20px 16px 0}.training-title{align-items:flex-start;gap:12px}.training-title .breadcrumb{font-size:12px}.training-title h1{font-size:24px}.training-day-label{font-size:12px;padding-top:3px;flex-shrink:0}.training-day-label small{font-size:12px}.training-intro{margin:8px 0 12px}.training-intro p{font-size:12px}.training-intro>span{display:none}
+ .day-card{padding:8px 8px 10px;min-height:48px}.day-card strong{font-size:14px}.day-card small{display:none}.day-card.selected:after{left:8px;right:8px}.day-cards{margin-bottom:8px}.session-progress{gap:12px}.session-progress>div:first-child{gap:8px}.session-progress>div>div>strong{font-size:22px}.session-progress .subtle,.session-progress>div>div>span{font-size:12px}
+ .training-dashboard{margin-bottom:8px}.training-preparation{margin-bottom:16px}.training-preparation>summary{font-size:13px}.preparation-subtitle{font-size:12px;margin-left:10px}.training-section-head>span{font-size:12px}.training-section-head h2{font-size:16px}
+ .training-card{padding:16px;border-radius:8px;scroll-margin-top:120px}.training-card-top{margin-bottom:12px}.training-exercise-head{grid-template-columns:64px minmax(0,1fr);gap:12px}.training-exercise-head>.exercise-thumb{width:64px}.exercise-title{font-size:17px}.exercise-target{font-size:12px}.training-page .exercise-lesson-row .original-button{font-size:12px;min-height:36px}.exercise-cue{font-size:13px;margin-top:10px}.training-page .exercise-guidance{margin-top:4px}
+ .exercise-records{margin-top:8px;padding-top:8px}.training-page .set-list-head,.training-page .set-row{grid-template-columns:20px minmax(0,1fr) minmax(0,1fr) 44px;gap:8px}.training-page .set-row .set-number{width:20px}.training-page .set-field input{padding-right:29px;font-size:16px}.training-page .set-field>span{right:9px}.record-panel-label{font-size:12px}.set-count-actions button{min-height:44px}.training-page .is-editing-sets .set-list-head,.training-page .is-editing-sets .set-row{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 44px 28px;gap:5px}.is-editing-sets .set-remove{width:28px}
+ .training-page .session-dock{padding:10px 16px max(10px,env(safe-area-inset-bottom))}.session-actions{gap:12px}.session-dock-label{display:none}.training-page .session-actions>.primary{flex:1}.training-page #reset-session{min-width:80px}.rest-dock{font-size:12px;gap:8px}.rest-dock strong{font-size:22px;margin:0 6px}.rest-dock button{padding:6px 8px}.training-page footer{padding-bottom:190px}
+}
+@media(prefers-reduced-motion:reduce){.training-page button,.day-card{transition:none}.training-page button:active{transform:none}}
+@media(min-width:820px){.session-progress>strong{grid-column:2;grid-row:1}.session-progress .progress-track{grid-row:2}}
+
+/* Whole warmup entry stays above the exercise examples when preparation opens. */
+.training-page .warmup-video-entry{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.training-page .warmup-video-entry h3{margin:0;font-size:16px;font-weight:600;line-height:1.5}
+.training-page .warmup-video-entry p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.training-page .warmup-video-entry .warmup-video-button{min-height:44px;font-size:13px;padding:10px 14px;background:var(--panel);color:var(--ink);border:1px solid var(--control-border);border-radius:6px;white-space:nowrap}
+@media(max-width:600px){.training-page .warmup-video-entry{align-items:flex-start;flex-direction:column;gap:12px}.training-page .warmup-video-entry .warmup-video-button{width:100%;justify-content:center}}

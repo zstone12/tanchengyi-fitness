@@ -1,0 +1,16 @@
+/* 今日训练分享图：底部按钮 + 预览弹窗 */
+#share-session{min-height:44px;padding:8px 14px;font-size:13px;white-space:nowrap;border-color:var(--control-border,var(--line));color:var(--ink)}
+#share-session:hover{background:var(--panel)}
+#share-dialog{width:min(460px,94vw);max-height:92vh;padding:20px;font-family:var(--workout-ui-font,system-ui,sans-serif);overflow:auto}
+#share-dialog::backdrop{background:#0000008c}
+#share-dialog .dialog-head{align-items:flex-start;gap:12px;margin-bottom:14px}
+#share-dialog .eyebrow{font-size:11px;letter-spacing:1px;color:var(--muted)}
+#share-dialog h2{font-size:18px;line-height:1.4;margin:2px 0 0}
+#share-close{min-width:44px;min-height:44px;border-color:transparent;font-size:22px;line-height:1;padding:0}
+.share-preview{background:var(--panel);border-radius:8px;padding:10px;max-height:58vh;overflow:auto;-webkit-overflow-scrolling:touch}
+.share-preview img{display:block;width:100%;height:auto;border-radius:6px;-webkit-touch-callout:default;user-select:auto}
+.share-hint{font-size:12px;line-height:1.6;color:var(--muted);margin:12px 0}
+.share-actions{display:flex}
+.share-actions .primary{flex:1;margin:0;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:var(--ink);border-color:var(--ink);color:var(--paper,var(--bg));font-size:14px;text-decoration:none}
+.share-actions .primary:hover{opacity:.88;background:var(--ink);color:var(--paper,var(--bg))}
+@media(max-width:600px){#share-session{padding:8px 10px;font-size:12px}#share-dialog{padding:16px}}

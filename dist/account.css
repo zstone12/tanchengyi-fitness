@@ -1,0 +1,72 @@
+/* 账号入口、登录弹窗与训练日历 */
+#account-open{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;min-height:36px}
+#account-open.is-signed-in{border-color:transparent;color:var(--gold)}
+.training-page #account-open{min-height:36px;min-width:0;font-family:var(--workout-ui-font,system-ui,sans-serif)}
+
+#account-dialog{width:min(400px,94vw);padding:22px;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;font-size:14px;line-height:1.6}
+#account-dialog::backdrop{background:#0000008c}
+#account-dialog .dialog-head{align-items:flex-start;gap:12px;margin-bottom:16px}
+#account-dialog .eyebrow{font-size:11px;letter-spacing:1px}
+#account-dialog h2{font-size:18px;line-height:1.4;margin:2px 0 0}
+#account-close{min-width:44px;min-height:44px;border-color:transparent;font-size:22px;line-height:1;padding:0}
+.account-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--panel);border-radius:8px;margin-bottom:16px}
+.account-tabs button{border:0;border-radius:6px;min-height:40px;color:var(--muted);font-size:14px}
+.account-tabs button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:0 1px 2px #0000000f}
+.account-field{display:block;margin-bottom:14px}
+.account-field>span{display:block;font-size:13px;margin-bottom:6px}
+.account-field input{display:block;width:100%;box-sizing:border-box;min-height:44px;padding:8px 12px;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px}
+.account-field input:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.account-field small{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.account-error{margin:0 0 12px;padding:8px 12px;border-radius:6px;font-size:13px;color:#8a2c1d;background:#b5432f14}
+html.dark .account-error{color:#f0a999;background:#b5432f2e}
+#account-form .primary{display:block;width:100%;margin:4px 0 0;min-height:46px;border-radius:6px;background:var(--ink);border-color:var(--ink);color:var(--bg);font-size:15px}
+#account-form .primary:hover{opacity:.88;background:var(--ink);color:var(--bg)}
+#account-form .primary:disabled{opacity:.6;cursor:default}
+.account-note{font-size:12px;line-height:1.7;color:var(--muted);margin:12px 0 0}
+.account-user{margin:0;font-size:15px}
+.account-actions{margin-top:18px}
+.account-actions button{min-height:44px;width:100%}
+
+.training-calendar{margin:0 0 16px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-family:var(--workout-ui-font,system-ui,sans-serif)}
+.training-calendar>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;list-style:none;cursor:pointer;font-size:14px;font-weight:500;padding:12px 16px;min-height:44px;box-sizing:border-box}
+.training-calendar>summary::-webkit-details-marker{display:none}
+.calendar-count{margin-left:12px;font-size:12px;font-weight:400;color:var(--muted)}
+.calendar-toggle{color:var(--muted);transition:transform .15s ease}
+.training-calendar[open] .calendar-toggle{transform:rotate(45deg)}
+.calendar-body{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:28px;padding:4px 16px 16px;border-top:1px solid var(--line)}
+.calendar-nav{display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px}
+.calendar-nav strong{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.calendar-nav button{min-width:44px;min-height:44px;padding:0;border-color:transparent;font-size:20px;line-height:1;color:var(--ink)}
+.calendar-nav button:disabled{color:var(--line);cursor:default}
+.calendar-nav button:not(:disabled):hover{background:var(--panel)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.calendar-weekday{text-align:center;font-size:11px;color:var(--muted);padding:2px 0 4px}
+.calendar-day{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:44px;padding:2px 0;border:1px solid transparent;border-radius:8px;background:none;font:inherit;color:var(--ink);box-sizing:border-box}
+.calendar-date{font-size:14px;line-height:1.3;font-variant-numeric:tabular-nums}
+.calendar-day.is-future .calendar-date{color:var(--muted);opacity:.55}
+.calendar-day.is-today{border-color:var(--control-border,var(--line))}
+.calendar-day.is-today .calendar-date{font-weight:700}
+.calendar-day.is-trained{background:var(--done-bg,#eaf0e9);color:var(--done-ink,#35543d);cursor:pointer}
+.calendar-day.is-trained:hover{filter:brightness(.97)}
+.calendar-day.is-selected{border-color:var(--done-ink,#35543d);box-shadow:inset 0 0 0 1px var(--done-ink,#35543d)}
+.calendar-mark{font-size:10px;line-height:1.2;font-weight:600;letter-spacing:1px;margin-right:-1px}
+.calendar-side{display:flex;flex-direction:column;min-width:0;padding-top:14px}
+.calendar-detail{flex:1;font-size:13px;line-height:1.6}
+.calendar-empty{margin:0;color:var(--muted);font-size:13px}
+.calendar-detail-head{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.calendar-detail-head strong{font-size:15px}
+.calendar-detail-head span{font-size:12px;color:var(--muted)}
+.calendar-session{margin-top:10px}
+.calendar-session-name{font-size:13px;font-weight:600}
+.calendar-session-name small{margin-left:8px;font-weight:400;font-size:12px;color:var(--muted)}
+.calendar-session ul{list-style:none;margin:4px 0 0;padding:0}
+.calendar-session li{display:flex;justify-content:space-between;gap:16px;padding:5px 0;border-top:1px solid var(--line)}
+.calendar-sets{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.calendar-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:14px 0 0;font-size:12px;color:var(--muted)}
+.sync-status-text.is-error{color:#a23b28}
+html.dark .sync-status-text.is-error{color:#f0a999}
+.calendar-login{min-height:36px;padding:4px 12px;font-size:12px;color:var(--ink);border-color:var(--control-border,var(--line))}
+.calendar-login:hover{background:var(--panel)}
+@media(max-width:760px){.calendar-body{grid-template-columns:1fr;gap:0;padding:0 12px 14px}.calendar-month{max-width:420px;width:100%;margin:0 auto}.calendar-side{padding-top:12px}}
+@media(max-width:600px){#account-open{max-width:84px;padding:6px 8px;font-size:13px}.training-calendar>summary{padding:10px 12px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){.calendar-toggle{transition:none}}
