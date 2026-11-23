@@ -141,7 +141,7 @@ cp -R "$STAGE/web" "$RELEASE"
 chmod -R u=rwX,go=rX "$RELEASE"
 
 # 2. 后端有变化才更新；重启后不健康就回滚 server.py，并放弃这次发布。
-health() { for _ in 1 2 3 4 5 6 7 8 9 10; do curl -fsS -m 3 -o /dev/null "http://127.0.0.1:$PORT/training/api/me" && return 0; sleep 0.5; done; return 1; }
+health() { for _ in 1 2 3 4 5 6 7 8 9 10; do curl -fs -m 3 -o /dev/null "http://127.0.0.1:$PORT/training/api/me" && return 0; sleep 0.5; done; return 1; }
 restart=0
 if ! cmp -s "$STAGE/server/$SERVICE.service" "/etc/systemd/system/$SERVICE.service"; then
   install -m 644 "$STAGE/server/$SERVICE.service" "/etc/systemd/system/$SERVICE.service"
