@@ -9,6 +9,8 @@
 #
 # 静态站点按版本目录发布：每次在 DEPLOY_RELEASES_DIR 下新建一个目录，
 # 再把 DEPLOY_WEB_LINK 这个软链接原子地指过去，所以切换没有中间状态，回滚只是改回链接。
+# 动作示范素材放在各版本共用的 DEPLOY_MEDIA_DIR，由服务器上的定时任务与 openGym 目录同步，
+# 每个版本目录里的 media/opengym 只是指向它的软链接。
 #
 # 通过环境变量调整目标（默认值对应当前线上环境）：
 #   DEPLOY_HOST          SSH 主机别名               默认 server2
@@ -16,6 +18,7 @@
 #   DEPLOY_WEB_LINK      Web 服务器读取的软链接     默认 /var/www/zy5-tools/training
 #   DEPLOY_RELEASES_DIR  版本目录的存放位置         默认 /var/www/tanchengyi-releases
 #   DEPLOY_APP_DIR       后端目录                   默认 /opt/zs12-training
+#   DEPLOY_MEDIA_DIR     动作素材共享目录           默认 /var/www/tanchengyi-media/opengym
 #   DEPLOY_URL           发布后检查的公网地址       默认 https://zstone12.xyz/training/
 set -euo pipefail
 
@@ -23,6 +26,7 @@ HOST=${DEPLOY_HOST:-server2}
 WEB_LINK=${DEPLOY_WEB_LINK:-/var/www/zy5-tools/training}
 RELEASES=${DEPLOY_RELEASES_DIR:-/var/www/tanchengyi-releases}
 APP_DIR=${DEPLOY_APP_DIR:-/opt/zs12-training}
+MEDIA_DIR=${DEPLOY_MEDIA_DIR:-/var/www/tanchengyi-media/opengym}
 URL=${DEPLOY_URL:-https://zstone12.xyz/training/}
 SERVICE=zs12-training
 PORT=3014
@@ -93,7 +97,7 @@ BUILD=$(mktemp -d)
 trap 'rm -rf "$BUILD"' EXIT
 mkdir -p "$BUILD/web" "$BUILD/server"
 cp -Rp dist/. "$BUILD/web/"
-cp -p server/server.py "server/$SERVICE.service" "$BUILD/server/"
+cp -p server/server.py server/sync_opengym.py "server/$SERVICE.service" server/zs12-opengym-sync.service server/zs12-opengym-sync.timer "$BUILD/server/"
 find "$BUILD" -name .DS_Store -delete
 
 # 给 index.html 里引用的本地 JS/CSS 打上内容哈希，文件一变地址就变，浏览器不会用到旧缓存。
@@ -123,22 +127,28 @@ fi
 STAGE=$(remote 'mktemp -d /tmp/training-release.XXXXXX')
 COPYFILE_DISABLE=1 tar -czf - -C "$BUILD" web server | remote "cat > '$STAGE/release.tgz'"
 
-remote bash -s -- "$STAGE" "$WEB_LINK" "$RELEASES" "$APP_DIR" "$SERVICE" "$PORT" "$SHA" "$KEEP" <<'REMOTE'
+remote bash -s -- "$STAGE" "$WEB_LINK" "$RELEASES" "$APP_DIR" "$SERVICE" "$PORT" "$SHA" "$KEEP" "$MEDIA_DIR" <<'REMOTE'
 set -euo pipefail
-STAGE=$1 WEB_LINK=$2 RELEASES=$3 APP_DIR=$4 SERVICE=$5 PORT=$6 SHA=$7 KEEP=$8
+STAGE=$1 WEB_LINK=$2 RELEASES=$3 APP_DIR=$4 SERVICE=$5 PORT=$6 SHA=$7 KEEP=$8 MEDIA_DIR=$9
 trap 'rm -rf "$STAGE"' EXIT
 if [ -e "$WEB_LINK" ] && [ ! -L "$WEB_LINK" ]; then
   echo "$WEB_LINK 不是软链接，无法按版本目录发布。请先把它改成指向版本目录的软链接。" >&2
   exit 1
 fi
 tar -xzf "$STAGE/release.tgz" -C "$STAGE" --no-same-owner --warning=no-unknown-keyword
-python3 -m py_compile "$STAGE/server/server.py"
+python3 -m py_compile "$STAGE/server/server.py" "$STAGE/server/sync_opengym.py"
 
 # 1. 新版本目录先就位（此时还没有流量）。
 RELEASE="$RELEASES/$(date +%Y%m%d-%H%M%S)-$SHA"
 mkdir -p "$RELEASES" "$APP_DIR"
 cp -R "$STAGE/web" "$RELEASE"
 chmod -R u=rwX,go=rX "$RELEASE"
+# 动作素材共用一份：仓库自带的文件只在共享目录缺少时补进去，然后版本目录里改成软链接。
+if [ ! -d "$MEDIA_DIR" ]; then mkdir -p "$MEDIA_DIR"; chown www-data:www-data "$(dirname "$MEDIA_DIR")" "$MEDIA_DIR"; fi
+cp -Rn "$RELEASE/media/opengym/." "$MEDIA_DIR/"
+chown -R www-data:www-data "$MEDIA_DIR"
+rm -rf "$RELEASE/media/opengym"
+ln -s "$MEDIA_DIR" "$RELEASE/media/opengym"
 
 # 2. 后端有变化才更新；重启后不健康就回滚 server.py，并放弃这次发布。
 health() { for _ in 1 2 3 4 5 6 7 8 9 10; do curl -fs -m 3 -o /dev/null "http://127.0.0.1:$PORT/training/api/me" && return 0; sleep 0.5; done; return 1; }
@@ -154,6 +164,13 @@ if ! cmp -s "$STAGE/server/server.py" "$APP_DIR/server.py"; then
   install -m 644 "$STAGE/server/server.py" "$APP_DIR/server.py"
   restart=1
 fi
+# 动作库同步脚本和它的每周定时任务。
+install -m 644 "$STAGE/server/sync_opengym.py" "$APP_DIR/sync_opengym.py"
+units_changed=0
+for unit in zs12-opengym-sync.service zs12-opengym-sync.timer; do
+  if ! cmp -s "$STAGE/server/$unit" "/etc/systemd/system/$unit"; then install -m 644 "$STAGE/server/$unit" "/etc/systemd/system/$unit"; units_changed=1; fi
+done
+if [ "$units_changed" = 1 ]; then systemctl daemon-reload; systemctl enable -q --now zs12-opengym-sync.timer; echo "动作库同步定时任务已安装"; fi
 if [ "$restart" = 1 ]; then
   systemctl restart "$SERVICE"
   if health; then echo "后端已更新并重启"; else

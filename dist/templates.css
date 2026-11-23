@@ -47,7 +47,7 @@ html.dark .template-row-actions .is-danger{color:#f0a999}
 #template-add:not(:disabled):hover{background:var(--panel)}
 .template-actions{display:flex;gap:10px;margin-top:16px}
 .template-actions #template-cancel{flex:0 0 96px;min-height:46px}
-.template-catalog{max-height:44vh;overflow:auto;margin:12px 0;padding-right:2px;-webkit-overflow-scrolling:touch}
+.template-catalog{max-height:max(180px,min(44vh,calc(90vh - 520px)));overflow:auto;margin:12px 0;padding-right:2px;-webkit-overflow-scrolling:touch}
 .template-catalog h3{font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 6px}
 .template-catalog section:first-child h3{margin-top:0}
 .template-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
@@ -60,3 +60,12 @@ html.dark .template-row-actions .is-danger{color:#f0a999}
 .template-custom .account-field{flex:1;margin:0}
 .template-custom button{flex:0 0 auto;min-height:44px}
 @media(max-width:600px){#template-dialog{padding:16px}.template-options{grid-template-columns:1fr}.template-item-fields{grid-template-columns:64px 1fr 80px}.training-page .day-card{flex:1 0 auto;padding-left:12px;padding-right:12px}}
+.template-parts{display:flex;gap:6px;overflow-x:auto;margin:10px 0 0;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.template-parts::-webkit-scrollbar{display:none}
+.template-parts button{flex:0 0 auto;min-height:36px;padding:4px 12px;border-radius:18px;font-size:13px;color:var(--muted);white-space:nowrap}
+.template-parts button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.template-option small{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.template-option.is-chosen small{color:inherit;opacity:.75}
+.template-count{margin:10px 0 6px;font-size:12px;color:var(--muted);text-align:center}
+#template-more{display:block;width:100%;min-height:42px;margin-bottom:4px}
+#demo-note{white-space:pre-line}

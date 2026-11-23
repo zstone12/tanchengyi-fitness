@@ -10,10 +10,12 @@
 
 - **训练手册**：七个主题的知识库，支持站内搜索，可对照技能原文与原版视频。
 - **今日训练**：胸 / 背 / 腿三个训练日，含热身、动作示范、逐组记录重量与次数、组间休息计时。
-- **自定义训练**：自建训练模板，从动作库里挑动作，也可以手动输入动作名，自己定组数、次数和休息时间。模板与胸 / 背 / 腿并列，记录、计时、日历、分享图都一样可用。
+- **自定义训练**：自建训练模板，从动作库里挑动作，也可以手动输入动作名，自己定组数、次数和休息时间。动作库与 [openGym](https://github.com/DuarteSantos8/openGym) 目录同步（5600 多个动作，带中文名、示范动画和步骤说明），可按部位筛选和搜索。模板与胸 / 背 / 腿并列，记录、计时、日历、分享图都一样可用。
 - **账号与同步**：注册登录后，训练记录和自定义模板按用户保存到服务器，换设备可继续。不登录也能照常使用，记录只留在当前浏览器。
 - **训练日历**：按月显示，训练过的日期会标注练了什么，点开可看当天完成的动作和组次。
 - **分享图**：把当天的训练内容生成一张图片，直接保存。
+
+更新记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 目录结构
 
@@ -27,10 +29,12 @@ dist/                 静态站点（无构建步骤，直接部署）
   templates.js        自定义训练模板：编辑、选动作、按账号同步
   share.js            分享图（canvas 绘制）
   original-videos.js  原版视频目录与播放
-  media/opengym/      动作示范素材（见下方「素材与版权」）
+  media/opengym/      内置训练计划用到的动作示范素材（完整动作库不在仓库里，见「动作库同步」）
   originals/          技能原文（Markdown）
 server/
   server.py           账号与训练记录 API（仅用 Python 标准库 + SQLite）
+  sync_opengym.py     把 openGym 动作目录同步到服务器的共享素材目录
+  zs12-opengym-sync.* 每周运行一次同步的 systemd 服务与定时器
   dev.py              本地联调：静态文件 + 把 /training/api/* 转发给 server.py
   zs12-training.service  systemd 单元
 scripts/deploy.sh     发布脚本
@@ -97,6 +101,23 @@ scripts/deploy.sh --dry-run  # 只看将要发布什么
 DEPLOY_SSH_OPTS="-J 跳板机" scripts/deploy.sh
 ```
 
+## 动作库同步
+
+完整动作库不放在仓库里，而是由服务器上的 `sync_opengym.py` 从 openGym 目录同步到共享目录 `/var/www/tanchengyi-media/opengym/`，每个版本目录里的 `media/opengym` 是指向它的软链接。
+
+- systemd 定时器 `zs12-opengym-sync.timer` 每周运行一次；上游没有新提交时几乎不产生流量（读到压缩包头里的提交号就断开）。
+- 同步会生成 `catalog.json`（动作索引，选动作时才加载）和 `info/<id>.json`（单个动作的步骤说明，中文优先）。
+- 同一动作的男女两版画法只收录一个；上游内容按不可信数据处理，文件名、大小、文件头都会校验，文字会去掉标记字符。
+- 本地开发时没有这份索引，选动作界面只显示内置的常用动作，其余功能不受影响。
+
+手动触发与查看：
+
+```bash
+systemctl start zs12-opengym-sync        # 立即同步一次
+journalctl -u zs12-opengym-sync -n 20    # 查看结果
+systemctl list-timers zs12-opengym-sync  # 下次运行时间
+```
+
 ## 后端
 
 `server/server.py` 监听 `127.0.0.1:3014`，数据存在 SQLite（systemd 的 `StateDirectory`，即 `/var/lib/zs12-training/training.db`）。
@@ -130,6 +151,6 @@ sudo -u www-data TRAINING_DB=/var/lib/zs12-training/training.db python3 server.p
 
 ## 素材与版权
 
-- **动作示范素材**（`dist/media/opengym/`）版权归 © Aliaksandr Makatserchyk / [Gym visual](https://gymvisual.com/) 所有，来源于 [openGym](https://github.com/DuarteSantos8/openGym) 动作目录，属于专有素材。本站按站点所有者取得的独立授权使用；**该授权不延伸给其他人**，如需使用这些素材，请自行向 Gym visual 获取授权。详见 [`dist/media/opengym/NOTICE.txt`](dist/media/opengym/NOTICE.txt)。
+- **动作示范素材**（仓库里的 `dist/media/opengym/`，以及服务器上同步来的完整动作库）版权归 © Aliaksandr Makatserchyk / [Gym visual](https://gymvisual.com/) 所有，来源于 [openGym](https://github.com/DuarteSantos8/openGym) 动作目录，属于专有素材。本站按站点所有者取得的独立授权使用；**该授权不延伸给其他人**，如需使用这些素材，请自行向 Gym visual 获取授权。详见 [`dist/media/opengym/NOTICE.txt`](dist/media/opengym/NOTICE.txt)。
 - **训练内容**整理自谭成义公开视频的学习笔记，原视频版权归原作者所有，站内仅提供链接与对照。
 - 仓库未附带开源许可证，代码部分如需复用请先联系作者。

@@ -1,0 +1,17 @@
+[Unit]
+Description=Sync the openGym exercise catalogue for the training site
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+ExecStart=/usr/bin/python3 /opt/zs12-training/sync_opengym.py --dir /var/www/tanchengyi-media/opengym
+TimeoutStartSec=30min
+UMask=0022
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/www/tanchengyi-media
+MemoryMax=512M

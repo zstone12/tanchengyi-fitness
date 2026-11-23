@@ -29,7 +29,7 @@ function writeDay(iso, data) {
 function isEmptyDay(data) { return Object.entries(data).every(([part, value]) => part === 'plans' || !Object.keys(value).length); }
 function dayPlan(data, dayKey) {
   const plan = data.plans?.[dayKey];
-  if (plan && typeof plan.label === 'string' && Array.isArray(plan.items) && plan.items.every(item => Array.isArray(item) && typeof item[0] === 'string' && typeof item[1] === 'string' && Array.isArray(item[2]))) return { label: cleanText(plan.label, 12), custom: true, items: plan.items.map(([id, title, planned]) => [id, cleanText(title, 24), planned.map(target => cleanText(target, 12))]) };
+  if (plan && typeof plan.label === 'string' && Array.isArray(plan.items) && plan.items.every(item => Array.isArray(item) && typeof item[0] === 'string' && typeof item[1] === 'string' && Array.isArray(item[2]))) return { label: cleanText(plan.label, 12), custom: true, items: plan.items.map(([id, title, planned]) => [id, cleanText(title, 40), planned.map(target => cleanText(target, 12))]) };
   return sessions[dayKey] || null;
 }
 function dayKeys(data) { return [...new Set([...Object.keys(sessions), ...Object.keys(data.plans || {})])]; }

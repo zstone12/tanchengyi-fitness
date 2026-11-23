@@ -4,7 +4,14 @@
 const BUILTIN_DAYS = ['push', 'pull', 'legs'];
 const TEMPLATE_KEY = 'tcf-templates';
 const TEMPLATE_LIMIT = 20, TEMPLATE_ITEM_LIMIT = 20;
-let templateView = 'list', templateDraft = null, templateQuery = '', templateConfirm = null, templateSyncTimer = null;
+const TEMPLATE_PAGE = 60;
+const LIBRARY_PARTS = { chest: '胸部', back: '背部', shoulders: '肩部', 'upper arms': '上臂', 'lower arms': '前臂', waist: '腰腹', 'upper legs': '大腿与臀', 'lower legs': '小腿', 'full body': '全身', cardio: '有氧', neck: '颈部' };
+const LIBRARY_EQUIPMENT = { 'body weight': '自重', dumbbell: '哑铃', cable: '绳索', barbell: '杠铃', 'leverage machine': '固定器械', band: '弹力带', 'resistance band': '阻力带', kettlebell: '壶铃', weighted: '负重', 'suspension trainer': '悬挂训练带', 'smith machine': '史密斯机', 'stability ball': '健身球', 'medicine ball': '药球', 'ez barbell': '曲杆', roller: '泡沫轴', 'sled machine': '倒蹬机', 'massage ball': '按摩球', 'weight plate': '杠铃片', rope: '绳', assisted: '辅助', landmine: '地雷管', 'bosu ball': '波速球', sandbag: '沙袋', 'trap bar': '六角杠', 'olympic barbell': '奥杆', 'stationary bike': '动感单车', 'elliptical machine': '椭圆机', 'wheel roller': '健腹轮', macebell: '锤铃', clubbell: '棒铃', tire: '轮胎', hammer: '大锤', 'upper body ergometer': '上肢测功机', 'skierg machine': '滑雪机', 'stepmill machine': '爬楼机' };
+// The full exercise library is synced from the openGym catalogue on the server (see server/sync_opengym.py)
+// and only fetched when the picker opens. Without it (for example in local development) the built-in list still works.
+const library = { status: 'idle', items: [], byId: new Map(), count: 0, syncedAt: '' };
+const libraryTitles = new Map();
+let templateView = 'list', templateDraft = null, templateQuery = '', templatePart = 'common', templateShown = TEMPLATE_PAGE, templateConfirm = null, templateSyncTimer = null;
 
 // User-entered text is inserted into HTML in many places, so markup characters are removed at the boundary.
 function cleanText(value, max) { return String(value ?? '').replace(/[<>&"'`\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, max); }
@@ -12,7 +19,7 @@ function clampInt(value, min, max, fallback) { const n = Math.round(Number(value
 function templateId(prefix) { return prefix + crypto.randomUUID().replace(/-/g, '').slice(0, 8); }
 function normalizeTemplateItem(item) {
   if (!item || typeof item !== 'object' || !/^[a-z0-9-]{1,40}$/.test(item.id)) return null;
-  const title = cleanText(item.title, 24);
+  const title = cleanText(item.title, 40);
   if (!title) return null;
   return { id: item.id, title, sets: clampInt(item.sets, 1, 10, 3), reps: cleanText(item.reps, 12) || '12', rest: clampInt(item.rest, 0, 600, 90) };
 }
@@ -47,7 +54,50 @@ function exerciseCatalog() {
   BUILTIN_DAYS.forEach(dayKey => sessions[dayKey].warm.forEach(([id, dose]) => { const media = planMedia(id); if (media) add(3, id, media.title, 1, dose, 30, media.note); }));
   return groups;
 }
-function catalogItem(id) { for (const group of exerciseCatalog()) { const found = group.items.find(item => item.id === id); if (found) return found; } return null; }
+function catalogItem(id) {
+  if (library.byId.has(id)) return library.byId.get(id);
+  for (const group of exerciseCatalog()) { const found = group.items.find(item => item.id === id); if (found) return found; }
+  return null;
+}
+// Library exercises use the id og-<openGym id>; their picture and animation are named after that id.
+function libraryMedia(key) {
+  const match = /^og-(\d{4,5})$/.exec(key || '');
+  return match ? { id: match[1], title: libraryTitles.get(key) || '', name: '', note: '', library: true } : undefined;
+}
+async function loadLibrary() {
+  if (library.status !== 'idle') return;
+  library.status = 'loading';
+  try {
+    const response = await fetch('media/opengym/catalog.json');
+    if (!response.ok) throw new Error();
+    const data = await response.json(), builtin = new Set();
+    exerciseCatalog().forEach(group => group.items.forEach(item => { if (item.media) builtin.add(item.media.id); }));
+    library.items = data.items.filter(row => Array.isArray(row) && /^\d{4,5}$/.test(row[0]) && !builtin.has(row[0])).map(([id, zh, en, part, equipment, category, hold]) => {
+      const title = cleanText(zh || en, 40), relaxed = category === 'stretching' || category === 'mobility' || category === 'yoga';
+      return { id: 'og-' + id, title, part, sub: [LIBRARY_EQUIPMENT[equipment] || cleanText(equipment, 20), LIBRARY_PARTS[part] || cleanText(part, 20)].filter(Boolean).join(' · '),
+        search: (title + ' ' + cleanText(en, 80)).toLowerCase(), media: { id }, sets: relaxed || hold ? 2 : 3, reps: hold || relaxed ? '30 秒' : '12', rest: relaxed ? 30 : 90, note: '' };
+    }).filter(item => item.title);
+    library.byId = new Map(library.items.map(item => [item.id, item]));
+    library.count = library.items.length;
+    library.syncedAt = cleanText(data.syncedAt, 10);
+    library.status = 'ready';
+  } catch { library.status = 'missing'; }
+  if (templateView === 'pick' && $('#template-dialog')?.open) { renderTemplateDialog(); }
+}
+// Fills the demo dialog with the catalogue's step-by-step text for a library exercise.
+async function loadLibraryInfo(id) {
+  const note = $('#demo-note');
+  note.dataset.library = id;
+  note.textContent = '';
+  try {
+    const response = await fetch(`media/opengym/info/${id}.json`);
+    if (!response.ok) return;
+    const info = await response.json();
+    if (note.dataset.library !== id) return;
+    const steps = (Array.isArray(info.steps) ? info.steps : []).map((step, index) => `${index + 1}. ${cleanText(step, 300)}`);
+    note.textContent = [cleanText(info.description, 400), ...steps].filter(Boolean).join('\n');
+  } catch {}
+}
 
 // Rebuilds the custom entries of sessions from the saved templates.
 function applyTemplates() {
@@ -55,6 +105,7 @@ function applyTemplates() {
   const notes = {};
   exerciseCatalog().forEach(group => group.items.forEach(item => { notes[item.id] = item.note; }));
   for (const template of activeTemplates()) {
+    template.items.forEach(item => libraryTitles.set(item.id, item.title));
     sessions[template.id] = { label: template.name, en: 'CUSTOM', no: '', muscles: `${template.items.length} 个动作`, warm: [], custom: true,
       items: template.items.map(item => [item.id, item.title, Array(item.sets).fill(item.reps), notes[item.id] || '', item.rest]) };
   }
@@ -138,6 +189,8 @@ function startTemplateDraft(template) {
   templateDraft = template ? { id: template.id, name: template.name, createdAt: template.createdAt, items: template.items.map(item => ({ ...item })) } : { id: null, name: '', createdAt: 0, items: [] };
   templateView = 'edit';
   templateQuery = '';
+  templatePart = 'common';
+  templateShown = TEMPLATE_PAGE;
 }
 function templateThumb(media) { return media ? `<img src="media/opengym/${media.id}.webp" alt="" width="44" height="44" loading="lazy">` : '<span class="template-thumb-empty" aria-hidden="true">自</span>'; }
 function templateListHtml() {
@@ -158,16 +211,30 @@ function templateEditHtml() {
     <p class="account-error" role="alert" hidden></p>
     <div class="template-actions"><button type="button" id="template-cancel">取消</button><button type="button" class="primary" id="template-save">保存模板</button></div>`;
 }
+function templateOptionHtml(item, chosen, full) {
+  return `<button type="button" class="template-option ${chosen.has(item.id) ? 'is-chosen' : ''}" data-pick="${item.id}" aria-pressed="${chosen.has(item.id)}" ${full && !chosen.has(item.id) ? 'disabled' : ''}>${templateThumb(item.media)}<span>${item.title}${item.sub ? `<small>${item.sub}</small>` : ''}</span><em aria-hidden="true">${chosen.has(item.id) ? '✓' : '＋'}</em></button>`;
+}
 function templateCatalogHtml() {
-  const query = templateQuery.trim().toLowerCase(), chosen = new Set(templateDraft.items.map(item => item.id)), full = templateDraft.items.length >= TEMPLATE_ITEM_LIMIT;
-  const groups = exerciseCatalog().map(group => ({ name: group.name, items: group.items.filter(item => !query || (item.title + ' ' + (item.media?.name || '')).toLowerCase().includes(query)) })).filter(group => group.items.length);
-  return groups.length ? groups.map(group => `<section><h3>${group.name}</h3><div class="template-options">${group.items.map(item => `<button type="button" class="template-option ${chosen.has(item.id) ? 'is-chosen' : ''}" data-pick="${item.id}" aria-pressed="${chosen.has(item.id)}" ${full && !chosen.has(item.id) ? 'disabled' : ''}>${templateThumb(item.media)}<span>${item.title}</span><em aria-hidden="true">${chosen.has(item.id) ? '✓' : '＋'}</em></button>`).join('')}</div></section>`).join('') : '<p class="template-empty">动作库里没有匹配的动作，可以在下面手动添加。</p>';
+  const terms = templateQuery.trim().toLowerCase().split(/\s+/).filter(Boolean), chosen = new Set(templateDraft.items.map(item => item.id)), full = templateDraft.items.length >= TEMPLATE_ITEM_LIMIT;
+  const matches = text => terms.every(term => text.includes(term));
+  const groups = exerciseCatalog().map(group => ({ name: group.name, items: group.items.filter(item => matches((item.title + ' ' + (item.media?.name || '')).toLowerCase())) })).filter(group => group.items.length);
+  const empty = '<p class="template-empty">没有匹配的动作，换个关键词，或在下面手动添加。</p>';
+  // 常用 without a search shows the hand-picked groups; everything else is one flat, paged list.
+  if (templatePart === 'common' && !terms.length) return groups.map(group => `<section><h3>${group.name}</h3><div class="template-options">${group.items.map(item => templateOptionHtml(item, chosen, full)).join('')}</div></section>`).join('');
+  if (library.status === 'loading' || library.status === 'idle') return '<p class="template-empty">正在载入动作库…</p>';
+  const everywhere = templatePart === 'common' || templatePart === 'all';
+  const pool = [...(everywhere ? groups.flatMap(group => group.items) : []), ...library.items.filter(item => (everywhere || item.part === templatePart) && matches(item.search))];
+  if (!pool.length) return empty;
+  const shown = pool.slice(0, templateShown);
+  return `<div class="template-options">${shown.map(item => templateOptionHtml(item, chosen, full)).join('')}</div><p class="template-count">${pool.length > shown.length ? `已显示 ${shown.length} / ${pool.length} 个` : `共 ${pool.length} 个`}</p>${pool.length > shown.length ? '<button type="button" id="template-more">显示更多</button>' : ''}`;
 }
 function templatePickHtml() {
-  return `<input type="search" id="template-search" placeholder="搜索动作，如「划船」「深蹲」" autocomplete="off" aria-label="搜索动作">
+  const chips = library.status === 'ready' ? [['common', '常用'], ['all', '全部'], ...Object.entries(LIBRARY_PARTS)] : [];
+  return `<input type="search" id="template-search" placeholder="搜索动作，如「划船」「深蹲」「哑铃」" autocomplete="off" aria-label="搜索动作" value="${esc(templateQuery)}">
+    ${chips.length ? `<div class="template-parts" role="group" aria-label="按部位筛选">${chips.map(([key, name]) => `<button type="button" data-part="${key}" aria-pressed="${key === templatePart}">${name}</button>`).join('')}</div>` : ''}
     <div class="template-catalog"></div>
     <div class="template-custom"><label class="account-field"><span>没找到？手动添加动作</span><input id="template-custom-name" maxlength="24" placeholder="输入动作名称，如「哑铃推肩」" autocomplete="off"></label><button type="button" id="template-custom-add">添加</button></div>
-    <p class="account-note">手动添加的动作没有示范动画，记录、计时和统计照常可用。每个模板最多 ${TEMPLATE_ITEM_LIMIT} 个动作。</p>
+    <p class="account-note">${library.status === 'ready' ? `动作库与 openGym 目录同步，共 ${library.count} 个动作${library.syncedAt ? `，更新于 ${library.syncedAt}` : ''}。` : ''}手动添加的动作没有示范动画，记录、计时和统计照常可用。每个模板最多 ${TEMPLATE_ITEM_LIMIT} 个动作。</p>
     <div class="template-actions"><button type="button" class="primary" id="template-pick-done"></button></div>`;
 }
 // Only the catalogue and the counter are redrawn while picking, so the text inputs keep focus and IME state.
@@ -180,9 +247,11 @@ function refreshTemplatePicker(focusId) {
   catalog.querySelectorAll('[data-pick]').forEach(button => button.onclick = () => {
     const id = button.dataset.pick, index = templateDraft.items.findIndex(item => item.id === id);
     if (index >= 0) templateDraft.items.splice(index, 1);
-    else { const item = catalogItem(id); templateDraft.items.push({ id, title: cleanText(item.title, 24), sets: item.sets, reps: cleanText(item.reps, 12) || '12', rest: item.rest }); }
+    else { const item = catalogItem(id); templateDraft.items.push({ id, title: cleanText(item.title, 40), sets: item.sets, reps: cleanText(item.reps, 12) || '12', rest: item.rest }); libraryTitles.set(id, item.title); }
     refreshTemplatePicker(id);
   });
+  const more = catalog.querySelector('#template-more');
+  if (more) more.onclick = () => { templateShown += TEMPLATE_PAGE; refreshTemplatePicker(); };
   if (focusId) catalog.querySelector(`[data-pick="${focusId}"]`)?.focus({ preventScroll: true });
 }
 function renderTemplateDialog() {
@@ -206,7 +275,15 @@ function renderTemplateDialog() {
   if (templateView === 'pick') {
     body.innerHTML = templatePickHtml();
     const search = body.querySelector('#template-search');
-    search.oninput = () => { templateQuery = search.value; refreshTemplatePicker(); };
+    search.oninput = () => { templateQuery = search.value; templateShown = TEMPLATE_PAGE; refreshTemplatePicker(); body.querySelector('.template-catalog').scrollTop = 0; };
+    body.querySelectorAll('[data-part]').forEach(button => button.onclick = () => {
+      templatePart = button.dataset.part;
+      templateShown = TEMPLATE_PAGE;
+      body.querySelectorAll('[data-part]').forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+      refreshTemplatePicker();
+      body.querySelector('.template-catalog').scrollTop = 0;
+    });
+    loadLibrary();
     const customName = body.querySelector('#template-custom-name'), addCustom = () => {
       const title = cleanText(customName.value, 24);
       if (!title) { customName.focus(); return; }
